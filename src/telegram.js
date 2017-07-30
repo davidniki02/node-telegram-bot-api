@@ -1284,7 +1284,55 @@ class TelegramBot extends EventEmitter {
     }
     return this._replyListeners.splice(index, 1)[0];
   }
+  
+    /**
+     * Use this method to delete a message, including service messages, with the following limitations:
+     * - A message can only be deleted if it was sent less than 48 hours ago.
+     * - Bots can delete outgoing messages in groups and supergroups.
+     * - Bots granted can_post_messages permissions can delete outgoing messages in channels.
+     * - If the bot is an administrator of a group, it can delete any message there.
+     * - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
+     * Returns True on success.
+     * @param  {Number|String} chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+     * @param  {Number} messageId Identifier of the message to delete
+     * @return {Promise}
+     * @see https://core.telegram.org/bots/api#deleteMessage
+     */
+    deleteMessage(chatId, messageId) {
+        const form = {
+            chat_id: chatId,
+            message_id: messageId
+        };
+        return this._request('deleteMessage', { form });
+    }
 
+    /**
+     * Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to
+     * work and must have the appropriate admin rights. Pass True for all boolean parameters to lift restrictions from a
+     * user. Returns True on success.
+     * @param  {Number|String} chatId Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+     * @param  {Number} userId Unique identifier of the target user
+     * @param  {Number} untilDate Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+     * @param  {Boolean} can_send_messages Pass True, if the user can send text messages, contacts, locations and venues
+     * @param  {Boolean} can_send_media_messages Pass True, if the user can send audios, documents, photos, videos, video notes and voice notes, implies can_send_messages
+     * @param  {Boolean} can_send_other_messages Pass True, if the user can send animations, games, stickers and use inline bots, implies can_send_media_messages
+     * @param  {Boolean} can_add_web_page_previews Pass True, if the user may add web page previews to their messages, implies can_send_media_messages
+     * @return {Promise}
+     * @see https://core.telegram.org/bots/api#restrictChatMember
+     */
+
+    restrictChatMember(chatId, userId, untilDate, can_send_messages, can_send_media_messages, can_send_other_messages, can_add_web_page_previews) {
+        var form = {
+            chat_id: chatId,
+            user_id: userId,
+            can_send_messages: can_send_messages,
+            can_send_media_messages: can_send_media_messages,
+            can_send_other_messages: can_send_other_messages,
+            can_add_web_page_previews: can_add_web_page_previews
+        };
+        return this._request('restrictChatMember', { form: form });
+    }
+	
   /**
    * Use this method to get up to date information about the chat
    * (current name of the user for one-on-one conversations, current
